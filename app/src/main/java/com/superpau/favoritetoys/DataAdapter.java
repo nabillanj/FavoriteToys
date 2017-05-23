@@ -10,20 +10,21 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
+import com.superpau.favoritetoys.Model.Movie;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.StringTokenizer;
 
-/**
- * Created by paupau on 5/20/2017.
- */
 
 public class DataAdapter extends RecyclerView.Adapter<DataAdapter.ViewHolder> {
-    private ArrayList<AndroidVersion> android;
+    private List<Movie> movieList;
     private Context context;
+    int selectedPos;
     private Picasso mPicasso;
 
-    public DataAdapter(Context context,ArrayList<AndroidVersion> android) {
-        this.android = android;
+    public DataAdapter(Context context, List<Movie> movies) {
+        this.movieList = movies;
         this.context = context;
     }
 
@@ -35,16 +36,23 @@ public class DataAdapter extends RecyclerView.Adapter<DataAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(DataAdapter.ViewHolder viewHolder, int i) {
-        final AndroidVersion ver = android.get(i);
-        viewHolder.tv_android.setText(android.get(i).getAndroid_version_name());
-        mPicasso.with(context).load(android.get(i).getAndroid_image_url()).resize(240, 300).error(R.mipmap.ic_launcher).into(viewHolder.img_android);
+        final Movie ver = movieList.get(i);
+        viewHolder.tv_android.setText(movieList.get(i).getTitle());
+        viewHolder.tv_android2.setText(String.valueOf(movieList.get(i).getVoteAverage()));
+        mPicasso.with(context)
+                .load(movieList.get(i).getPosterPath())
+                .resize(240, 300)
+                .error(R.mipmap.ic_launcher)
+                .into(viewHolder.img_android);
+
 
         viewHolder.setClickListener(new UlahDibuka() {
             @Override
             public void onClick(View view) {
                 Intent i = new Intent(context, DetailActivity.class);
-                i.putExtra("text",ver.getAndroid_version_name());
-                i.putExtra("image",ver.getAndroid_image_url());
+                i.putExtra("text",ver.getTitle());
+                i.putExtra("image",ver.getPosterPath());
+                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(i);
             }
         });
@@ -53,11 +61,11 @@ public class DataAdapter extends RecyclerView.Adapter<DataAdapter.ViewHolder> {
 
     @Override
     public int getItemCount() {
-        return android.size();
+        return movieList.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-        private TextView tv_android;
+        private TextView tv_android, tv_android2;
         private ImageView img_android;
         UlahDibuka ulahpokonamah;
 
@@ -65,6 +73,7 @@ public class DataAdapter extends RecyclerView.Adapter<DataAdapter.ViewHolder> {
             super(view);
 
             tv_android = (TextView)view.findViewById(R.id.tv_android);
+            tv_android2 = (TextView)view.findViewById(R.id.tv_android2);
             img_android = (ImageView) view.findViewById(R.id.img_android);
 
             view.setOnClickListener(this);
@@ -73,6 +82,7 @@ public class DataAdapter extends RecyclerView.Adapter<DataAdapter.ViewHolder> {
         public void setClickListener(UlahDibuka ulahatuh) {
             this.ulahpokonamah = ulahatuh;
         }
+
         @Override
         public void onClick(View v) {
             ulahpokonamah.onClick(v);
